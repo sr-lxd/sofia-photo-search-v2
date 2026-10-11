@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "updated_at": "2026-03-11T20:19:00+08:00",
+  "default_deny": true,
+  "policies": [
+    {
+      "id": "admin",
+      "name": "管理员",
+      "enabled": true,
+      "is_admin": true,
+      "password": "CHANGE_ME",
+      "roots": [
+        "D:\\photos"
+      ],
+      "note": "管理员策略，允许访问全部受管目录"
+    },
+    {
+      "id": "user2",
+      "name": "用户2",
+      "enabled": true,
+      "is_admin": false,
+      "password": "CHANGE_ME",
+      "roots": [
+        "D:\\photos\\school\\z"
+      ],
+      "note": "示例受限策略，仅允许访问一个子目录"
+    },
+    {
+      "id": "user3",
+      "name": "用户3",
+      "enabled": true,
+      "is_admin": false,
+      "password": "CHANGE_ME",
+      "roots": [
+        "D:\\photos\\user3"
+      ],
+      "note": "受限策略示例：一个目录"
+    },
+    {
+      "id": "user4",
+      "name": "用户4",
+      "enabled": true,
+      "is_admin": false,
+      "password": "CHANGE_ME",
+      "roots": [
+        "D:\\photos\\user4\\backup",
+        "D:\\photos\\user4"
+      ],
+      "note": "受限策略示例：两个目录"
+    },
+    {
+      "id": "user5",
+      "name": "用户5",
+      "enabled": true,
+      "is_admin": false,
+      "password": "CHANGE_ME",
+      "roots": [
+        "D:\\photos\\user5",
+        "D:\\photos\\school\\2021"
+      ],
+      "note": "受限策略示例：跨两个根目录"
+    }
+  ]
+}

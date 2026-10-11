@@ -1,0 +1,52 @@
+[face]
+engine = insightface
+use_gpu = false
+model_name = antelopev2
+embedding_dim = 512
+
+[vision]
+enabled = true
+model_name = ViT-B-32
+pretrained = openai
+embedding_dim = 512
+text_model = D:\photo_search_v2\runtime\models\mclip-vit-b32
+
+[index]
+backend = faiss
+index_type = hnsw
+nlist = 4096
+pq_m = 64
+hnsw_m = 32
+
+[scan]
+scan_idle_only = false
+idle_minutes = 10
+cpu_limit = 40
+gpu_limit = 30
+io_limit = 120
+scan_batch_size = 100
+
+[database]
+host = 127.0.0.1
+port = 3306
+user = photo_search_v2
+password = CHANGE_ME
+database = photo_search_v2
+charset = utf8mb4
+
+[paths]
+photo_roots = D:\photos;D:\archive
+index_dir = D:\photo_search_v2\runtime\index
+thumb_dir = D:\photo_search_v2\runtime\thumbs
+export_dir = D:\photo_search_v2\runtime\export
+source_read_only = true
+
+[auth]
+password = CHANGE_ME
+session_secret = CHANGE_ME
+policies_json = D:\photo_search_v2\config\auth_policies_v2.json
+cookie_name = photo_search_v2_auth
+
+[server]
+port = 5091
+

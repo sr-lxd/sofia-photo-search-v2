@@ -1,0 +1,579 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sofia照片多要素搜索器</title>
+  <link rel="stylesheet" href="/ui/assets/bootstrap.min.css">
+  <link rel="stylesheet" href="/ui/styles.css?v=20260313_admin_policy_editor_v1">
+</head>
+<body><div style="padding:8px;text-align:center"><a href="/">返回新版照片库</a> · v2源照片只读</div>
+  <nav class="navbar">
+    <div class="navbar-title-wrap">
+      <a id="mainTitle" class="navbar-brand" href="#" data-base-title="Sofia照片多要素搜索器" onclick="scrollToTop(); return false;">Sofia照片多要素搜索器</a>
+      <div class="navbar-server-links">
+        <a href="http://example.com:5002" target="_blank" class="navbar-server-link">服务器1</a>
+        <a href="https://example.com:5005" target="_blank" class="navbar-server-link">服务器2</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="layout">
+      <div class="sidebar">
+        <div class="card">
+          <div class="card-body">
+            <div class="sidebar-card-top-actions">
+              <button id="btnToggleSidebarFullscreen" class="btn btn-outline btn-sm sidebar-fullscreen-toggle" type="button" hidden>&#20840;&#23631;</button>
+            </div>
+            <div id="mobileFontSizeRow" class="mobile-font-size-row" aria-label="手机字号设置">
+              <span class="mobile-font-size-title">字号</span>
+              <div class="mobile-font-size-group" role="group" aria-label="手机字号大小">
+                <button id="btnMobileFontSm" class="mobile-font-size-btn" type="button" onclick="setMobileUiFontSize('sm')" aria-pressed="false">小</button>
+                <button id="btnMobileFontSmd" class="mobile-font-size-btn" type="button" onclick="setMobileUiFontSize('smd')" aria-pressed="false">较小</button>
+                <button id="btnMobileFontMd" class="mobile-font-size-btn" type="button" onclick="setMobileUiFontSize('md')" aria-pressed="true">中</button>
+                <button id="btnMobileFontLg" class="mobile-font-size-btn" type="button" onclick="setMobileUiFontSize('lg')" aria-pressed="false">较大</button>
+                <button id="btnMobileFontXl" class="mobile-font-size-btn" type="button" onclick="setMobileUiFontSize('xl')" aria-pressed="false">大</button>
+              </div>
+            </div>
+            <label class="form-label">上传标准照片（可多选）</label>
+            <input id="faceFile" type="file" style="display:none" accept="image/*" multiple>
+            <div id="addFileRow" class="btn-row" style="margin-top:0.25rem;">
+              <button id="faceFileAddBtn" type="button" class="btn btn-outline btn-sm">添加文件</button>
+            </div>
+            <div id="queryPreview" class="preview" aria-live="polite"></div>
+            <div id="standardActionRow" class="btn-row">
+              <button id="btnDeleteSelectedStandard" class="btn btn-outline btn-sm" onclick="deleteSelectedStandardPhotos()">删除选中</button>
+              <button id="btnClearStandardPool" class="btn btn-outline btn-sm" onclick="clearAllStandardPhotos()">清空</button>
+              <button id="btnClearAllStandard" class="btn btn-outline btn-sm" onclick="clearAllStandardPhotosAndUploads()">清空所有</button>
+              <button id="btnRefreshStandardPool" class="btn btn-outline btn-sm" onclick="loadStandardPhotoPool()">刷新</button>
+            </div>
+
+            <div class="element-header">
+              <label class="form-label" style="margin-bottom:0;">搜索要素</label>
+              <div class="element-mode-inline">
+                <span class="element-mode-tag">逻辑</span>
+                <label class="chip mode-chip"><input type="checkbox" id="elementModeAnd" checked> AND</label>
+                <label class="chip mode-chip"><input type="checkbox" id="elementModeOr"> OR</label>
+              </div>
+            </div>
+            <div class="element-grid">
+              <label class="chip"><input type="checkbox" class="element-check" value="face"> 人脸</label>
+              <label class="chip"><input type="checkbox" class="element-check" value="scene"> 全景</label>
+              <label class="chip"><input type="checkbox" class="element-check" value="focus"> 聚焦</label>
+              <label class="chip"><input type="checkbox" class="element-check" value="text"> 文字</label>
+            </div>
+
+            <div id="faceSearchCard" class="text-search-card" hidden>
+              <div class="text-search-card-title">人脸检索设置</div>
+              <div class="text-search-row text-search-row-tight">
+                <label class="text-search-label text-search-label-inline">逻辑</label>
+                <div class="text-search-inline-group">
+                  <label class="chip mode-chip mode-chip-compact"><input type="checkbox" id="faceModeOr" checked> OR</label>
+                  <label class="chip mode-chip mode-chip-compact"><input type="checkbox" id="faceModeAnd"> AND</label>
+                </div>
+                <label class="text-search-label text-search-label-inline" for="faceMinMatch">至少匹配</label>
+                <input id="faceMinMatch" type="number" class="form-control form-control-sm text-search-input text-search-input-sm" min="1" step="1" value="" placeholder="自动">
+              </div>
+              <div class="text-search-row text-search-row-tight">
+                <label class="text-search-label text-search-label-inline">预裁剪</label>
+                <div class="text-search-inline-group">
+                  <label class="chip mode-chip mode-chip-compact"><input type="checkbox" id="facePruneToggle" checked> 开</label>
+                </div>
+              </div>
+              <div id="faceMinMatchHint" class="muted text-search-inline-hint">范围：1..待检测（当前 自动）</div>
+              <div class="text-search-tip">至少匹配留空=自动；预裁剪开=更精准更少，关=召回更多。</div>
+            </div>
+
+            <div id="sceneSearchCard" class="text-search-card" hidden>
+              <div class="text-search-card-title">全景检索说明</div>
+              <div class="text-search-tip">用于匹配整张画面的场景语义（不做局部裁剪），适合风景/街景/室内等整体构图检索；可与人脸、聚焦、文字、GPS条件叠加。</div>
+            </div>
+
+            <div id="focusSearchCard" class="text-search-card" hidden>
+              <div class="text-search-card-title">聚焦分选项</div>
+              <div class="focus-mode-grid">
+                <label class="chip focus-mode-chip"><input type="checkbox" class="focus-mode-check" value="center" checked> 中心</label>
+                <label class="chip focus-mode-chip"><input type="checkbox" class="focus-mode-check" value="vertical"> 垂直</label>
+                <label class="chip focus-mode-chip"><input type="checkbox" class="focus-mode-check" value="cross"> 十字</label>
+                <label class="chip focus-mode-chip"><input type="checkbox" class="focus-mode-check" value="horizontal"> 横向</label>
+              </div>
+              <div class="text-search-tip">勾选“聚焦”后生效：中心=主体居中，垂直=中间竖向，十字=横纵中轴，横向=中间横向；可多选，未选默认中心。</div>
+            </div>
+
+            <div id="textSearchCard" class="text-search-card" hidden>
+              <div class="text-search-card-title">文字检索设置</div>
+              <div class="text-search-row text-search-row-tight">
+                <label class="text-search-label" for="textQuery">关键词</label>
+                <input id="textQuery" type="text" class="form-control form-control-sm text-search-input" placeholder="文件名或本级目录关键词">
+              </div>
+              <div class="text-search-row text-search-row-tight">
+                <label class="text-search-label text-search-label-inline">逻辑</label>
+                <div class="text-search-inline-group">
+                  <label class="chip mode-chip mode-chip-compact"><input type="checkbox" id="textModeAnd" checked> AND</label>
+                  <label class="chip mode-chip mode-chip-compact"><input type="checkbox" id="textModeOr"> OR</label>
+                </div>
+                <label class="chip text-scope-chip text-scope-chip-compact"><input type="checkbox" id="textAllTypes"> 全类型文件</label>
+                <label class="chip text-scope-chip text-scope-chip-compact"><input type="checkbox" id="textScopeAny" checked> 任意父目录</label>
+              </div>
+              <div class="text-search-tip">仅在勾选“文字”要素时生效；勾选“全类型文件”将自动填入全部图片后缀并切换 OR，也可对整个照片库进行排序浏览。</div>
+            </div>
+
+            <div id="mobileFilterQuickRow" class="mobile-filter-quick-row" aria-label="快捷筛选">
+              <div id="mobileGpsQuickItem" class="mobile-filter-quick-item">
+                <button id="btnMobileGpsFilter" class="mobile-filter-icon-btn" type="button" onclick="toggleGpsFilters()" title="GPS筛选" aria-label="GPS筛选" aria-pressed="false">📍</button>
+                <span class="mobile-filter-icon-label">GPS搜索</span>
+              </div>
+              <div id="mobileDateQuickItem" class="mobile-filter-quick-item">
+                <button id="btnMobileDateFilter" class="mobile-filter-icon-btn" type="button" onclick="toggleDateFilters()" title="日期筛选" aria-label="日期筛选" aria-pressed="false">📅</button>
+                <span class="mobile-filter-icon-label">日期设置</span>
+              </div>
+            </div>
+
+            <div id="filterDualGrid" class="filter-dual-grid">
+              <div id="gpsFiltersCard" class="date-filter-block gps-filter-card">
+                <div id="gpsFiltersHeader" class="date-filter-header date-filter-toggle-row" onclick="toggleGpsFilters()">
+                  <label id="gpsFiltersTitle" class="form-label section-toggle-title" style="margin-bottom:0;" aria-controls="gpsFiltersContent" aria-expanded="false" role="button" tabindex="0">GPS中心</label>
+                  <button id="btnToggleGpsFilters" class="date-filter-toggle" type="button" aria-expanded="false" title="隐藏/显示">▶</button>
+                </div>
+                <div id="gpsFiltersContent" class="gps-filter-content" hidden>
+                  <label class="form-label">GPS 半径查询（公里）</label>
+                  <input id="gpsRadius" type="number" class="form-control" value="5" min="1" max="50" step="1">
+                  <div class="muted">默认 5km，可选 1-50km。先在结果卡片设置中心照片。</div>
+                  <div class="btn-row">
+                    <button id="btnRunGpsSearch" class="btn btn-primary" onclick="runGpsSearch()">按GPS半径查询</button>
+                    <button id="btnRunGpsElementSearch" class="btn btn-primary" onclick="runGpsElementSearch()">按GPS半径叠加要素查询</button>
+                  </div>
+                  <div id="gpsCenterInfo" class="muted">GPS中心：未设置</div>
+                </div>
+              </div>
+
+              <div id="dateFiltersCard" class="date-filter-block date-range-card">
+                <div id="dateFiltersHeader" class="date-filter-header date-filter-toggle-row" onclick="toggleDateFilters()">
+                  <label id="dateFiltersTitle" class="form-label section-toggle-title" style="margin-bottom:0;" aria-controls="dateFiltersContent" aria-expanded="false" role="button" tabindex="0">搜索日期</label>
+                  <button id="btnToggleDateFilters" class="date-filter-toggle" type="button" aria-expanded="false" title="隐藏/显示">▶</button>
+                </div>
+                <div id="dateFiltersContent" class="date-range-content" hidden>
+                  <label class="form-label">起始日期</label>
+                  <input id="dateFrom" type="date" class="form-control">
+
+                  <label class="form-label">结束日期</label>
+                  <input id="dateTo" type="date" class="form-control">
+
+                  <div class="btn-row quick-range">
+                    <button class="btn btn-outline btn-sm" onclick="setQuickDateRange('all')">全部日期</button>
+                    <button class="btn btn-outline btn-sm" onclick="setQuickDateRange('1m')">前1月</button>
+                    <button class="btn btn-outline btn-sm" onclick="setQuickDateRange('5y')">前5年</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="stageWrap" style="display:none;">
+              <label class="form-label">检索阶段</label>
+              <select id="stage" class="form-control">
+                <option value="3">阶段3（完整）</option>
+                <option value="2">阶段2（快速）</option>
+                <option value="1">阶段1（缓存）</option>
+              </select>
+            </div>
+
+            <div id="downloadDirCard" style="display:none;">
+              <label class="form-label">下载目录</label>
+              <div class="row">
+                <div class="col">
+                  <input id="downloadDir" type="text" class="form-control" placeholder="例如：D:\\Downloads\\photos">
+                </div>
+                <div class="col">
+                  <button class="btn btn-outline btn-sm" onclick="browseDir()">浏览选择</button>
+                </div>
+              </div>
+              <div class="muted">复制选中的照片到该目录</div>
+            </div>
+
+            <div id="runSearchRow" class="btn-row">
+              <button id="btnRunSearch" class="btn btn-primary" onclick="runSearch()">开始搜索</button>
+            </div>
+            <div id="searchWarmStatus" class="search-warm-status" hidden>系统预热中，请稍候...</div>
+            <div id="searchQuickTipCard" class="search-quick-tip-card">
+              <div class="search-quick-tip-title">搜索提示</div>
+              <div class="search-quick-tip-line">浏览全部：勾选“文字 + 全类型文件”，再点“开始搜索”。</div>
+              <div class="search-quick-tip-line">精准找人：先上传标准照，再勾选人脸/全景/聚焦组合。</div>
+              <div class="search-quick-tip-line">结果中再搜索：在搜索结果点击“标准照片”“GPS中心”，可以进行二次精细搜寻。</div>
+            </div>
+            <div id="searchActionRow" class="btn-row">
+              <button id="btnSearchBatchFirst" class="btn btn-outline btn-sm" onclick="goSearchBatchFirst()">首批</button>
+              <button id="btnSearchBatchPrev" class="btn btn-outline btn-sm" onclick="goSearchBatchPrev()">上批</button>
+              <button id="btnSearchBatchNext" class="btn btn-outline btn-sm" onclick="goSearchBatchNext()">下批</button>
+              <button id="btnSearchBatchLast" class="btn btn-outline btn-sm" onclick="goSearchBatchLast()">末批</button>
+            </div>
+            <div id="searchStatusWrap" class="search-status-wrap" aria-live="polite">
+              <div id="searchStatus" class="muted search-status-main"></div>
+              <details id="searchStatusDebugWrap" class="search-status-debug" hidden>
+                <summary id="searchStatusDebugTitle">查看调试详情</summary>
+                <div id="searchStatusDebug" class="muted search-status-debug-text"></div>
+              </details>
+            </div>
+
+            <div id="searchBatchInfo" class="muted" hidden>每批55张，等待搜索</div>
+          </div>
+        </div>
+
+        <div class="card" id="favoriteCard" style="display:none;">
+          <div class="card-body">
+            <h3>人物收藏夹</h3>
+            <div class="row">
+              <div class="col">
+                <input id="favoriteName" class="form-control" placeholder="收藏夹名称">
+              </div>
+              <div class="col">
+                <button class="btn btn-secondary" onclick="createFavorite()">创建</button>
+              </div>
+            </div>
+            <label class="form-label">选择收藏夹</label>
+            <select id="favoriteSelect" class="form-control"></select>
+            <div class="btn-row">
+              <button class="btn btn-secondary" onclick="searchFavorite()">搜索收藏夹</button>
+              <button class="btn btn-outline" onclick="loadFavorites()">刷新</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+        <div class="main">
+          <div class="card" id="searchResultsCard">
+            <div class="card-body">
+              <div id="searchResultsHeaderRow" class="settings-header">
+                <h3 id="searchResultsTitle" class="section-toggle-title" onclick="toggleSearchResultsPanel()" aria-controls="searchResultsContent" aria-expanded="true" role="button" tabindex="0">搜索结果</h3>
+                <button id="btnTogglePcSidebar" class="btn btn-outline btn-sm pc-sidebar-toggle" type="button" hidden>&#38544;&#34255;&#20391;&#26639;</button>
+                <button id="btnToggleSearchResults" class="settings-toggle" type="button" onclick="toggleSearchResultsPanel()" aria-expanded="true" title="隐藏/显示">&#9660;</button>
+              </div>
+              <div id="searchResultsContent">
+                <div class="results-toolbar">
+                  <div class="actions">
+                    <span class="main-actions">
+                      <button class="btn btn-outline btn-sm" onclick="selectAll(true)">全选</button>
+                      <button class="btn btn-outline btn-sm" onclick="selectAll(false)">清空</button>
+                      <button id="btnDownloadSelected" class="btn btn-secondary btn-sm" onclick="downloadSelected()">下载选中</button>
+                      <button id="btnTrashSelected" class="btn btn-outline btn-sm" onclick="trashSelected()">删除</button>
+                    </span>
+                    <span id="resultSortInlineAnchor" class="result-sort-inline-anchor" aria-hidden="true"></span>
+                    <span id="resultSortInline" class="sort-inline">
+                      <select id="resultSortMode" class="form-control form-control-sm results-sort-select" title="结果排序方式">
+                        <option value="exif_desc" selected>时间新&rarr;旧</option>
+                        <option value="exif_asc">时间旧&rarr;新</option>
+                        <option value="score_desc">相似度高&rarr;低</option>
+                        <option value="score_asc">相似度低&rarr;高</option>
+                        <option value="face_count_desc">脸数多&rarr;少</option>
+                        <option value="face_count_asc">脸数少&rarr;多</option>
+                        <option value="face_count_exact">限定脸数</option>
+                        <option value="gps_reference_asc">距参考点近&rarr;远</option>
+                        <option value="gps_reference_desc">距参考点远&rarr;近</option>
+                        <option value="filename_asc">文件名A&rarr;Z</option>
+                        <option value="filename_desc">文件名Z&rarr;A</option>
+                      </select>
+                      <span id="resultFaceCountExactWrap" class="result-face-count-exact-wrap" hidden>
+                        <span class="result-face-count-exact-label">脸数</span>
+                        <input id="resultFaceCountExact" type="number" class="form-control form-control-sm results-face-count-input" min="0" step="1" value="1" inputmode="numeric" title="限定脸数">
+                      </span>
+                    </span>
+                  </div>
+                  <span id="selectedCount" class="muted">已选 0</span>
+                </div>
+                <div id="resultsGuide" class="results-guide">
+                  <div class="results-guide-title">&#24320;&#22987;&#26816;&#32034;&#21069;&#23567;&#25552;&#31034;</div>
+                  <div class="results-guide-line">&#21487;&#30452;&#25509;&#21246;&#36873;&ldquo;&#25991;&#23383;&rdquo;+&ldquo;&#20840;&#31867;&#22411;&#25991;&#20214;&rdquo;&#65292;&#28857;&#20987;&ldquo;&#24320;&#22987;&#25628;&#32034;&rdquo;&#65292;&#21363;&#21487;&#27983;&#35272;&#25972;&#20010;&#29031;&#29255;&#24211;&#12290;</div>
+                  <div class="results-guide-line">&#20063;&#21487;&#19978;&#20256;&#26631;&#20934;&#29031;&#29255;&#21518;&#65292;&#20877;&#36827;&#34892;&#20154;&#33080;/&#20840;&#26223;/&#32858;&#28966;/&#25991;&#23383;&#32452;&#21512;&#26816;&#32034;&#12290;</div>
+                  <div class="results-guide-line muted">&#20986;&#29616;&#25628;&#32034;&#32467;&#26524;&#21518;&#65292;&#26412;&#25552;&#31034;&#20250;&#33258;&#21160;&#38544;&#34255;&#12290;</div>
+                </div>
+                <div id="results" class="grid"></div>
+                <div id="searchBatchBottomWrap" class="results-batch-footer" hidden>
+                  <div class="btn-row results-batch-buttons">
+                    <button class="btn btn-outline btn-sm" type="button" onclick="scrollToTop()">&#39029;&#39318;</button>
+                    <button class="btn btn-outline btn-sm" type="button" onclick="scrollToBottom()">&#39029;&#26411;</button>
+                    <button id="btnSearchBatchFirstBottom" class="btn btn-outline btn-sm" onclick="goSearchBatchFirst()">&#39318;&#23631;</button>
+                    <button id="btnSearchBatchPrevBottom" class="btn btn-outline btn-sm" onclick="goSearchBatchPrev()">&#19978;&#25209;</button>
+                    <button id="btnSearchBatchNextBottom" class="btn btn-outline btn-sm" onclick="goSearchBatchNext()">&#19979;&#25209;</button>
+                    <button id="btnSearchBatchLastBottom" class="btn btn-outline btn-sm" onclick="goSearchBatchLast()">&#26411;&#25209;</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="systemSettingsCard">
+            <div class="card-body">
+              <div class="settings-header date-filter-toggle-row" onclick="toggleSystemSettings()">
+                <h3 id="systemSettingsTitle" class="section-toggle-title" onclick="event.stopPropagation(); toggleSystemSettings()" aria-controls="systemSettingsContent" aria-expanded="true" role="button" tabindex="0">系统设置</h3>
+                <div class="settings-header-actions">
+                  <button id="btnToggleSystemSettingsFullscreen" class="btn btn-outline btn-sm system-settings-fullscreen-toggle" type="button" onclick="event.stopPropagation();" hidden>全屏</button>
+                  <button id="btnToggleSystemSettings" class="settings-toggle" type="button" onclick="event.stopPropagation(); toggleSystemSettings()" aria-expanded="true" title="隐藏/显示">&#9660;</button>
+                </div>
+              </div>
+              <div id="systemSettingsContent">
+                <div class="settings-section">
+                  <h4>项目使用说明</h4>
+                  <div class="btn-row">
+                    <button id="btnToggleUsageGuide" class="btn btn-outline btn-sm" type="button" onclick="toggleUsageGuide()">查看使用说明</button>
+                  </div>
+                  <div id="usageGuideContent" class="usage-guide muted" hidden>
+                    1. 使用方法：上传标准照片并选择要素后，点击“开始搜索”。<br>
+                    2. GPS方法：先设为GPS中心，再按半径查询或叠加要素查询。<br>
+                    3. 扫描建议：日常用增量扫描；大变更后再全扫描。<br>
+                    4. 故障处理：界面异常先Ctrl+F5，再看“系统状态”。<br>
+                    5. 开发者：Sofia思维实验室 / 见仓库 Issues
+                  </div>
+                </div>
+                <div class="settings-section">
+                  <h4>账户退出</h4>
+                  <div class="muted">退出当前用户和密码状态，并返回登录界面。</div>
+                  <div class="btn-row">
+                    <button id="btnLogoutCurrentUser" class="btn btn-outline btn-sm" type="button" onclick="logoutCurrentUser()">退出</button>
+                  </div>
+                  <div id="logoutStatus" class="muted"></div>
+                </div>
+                <div id="adminPolicySettingsSection" class="settings-section" hidden>
+                  <h4>用户权限设置</h4>
+                  <div class="muted">仅管理员可用。进入前需再次输入当前管理员密码，保存时会先自动备份 `auth_policies.json`，保存后即时生效。</div>
+                  <div class="btn-row">
+                    <button id="btnOpenAdminPolicyEditor" class="btn btn-outline btn-sm" type="button" onclick="openAdminPolicyEditor()">进入配置界面</button>
+                  </div>
+                  <div id="adminPolicySectionStatus" class="muted"></div>
+                </div>
+                <div class="settings-section">
+                  <h4>界面交互</h4>
+                  <label class="form-label">缩略图放大触发</label>
+                  <select id="lightboxTriggerMode" class="form-control">
+                    <option value="dblclick" selected>双击放大（默认）</option>
+                    <option value="click">单击放大</option>
+                  </select>
+                  <label class="form-label" style="margin-top:0.5rem;">图像放大精细度</label>
+                  <select id="lightboxQuality" class="form-control">
+                    <option value="512">标准（512）</option>
+                    <option value="720" selected>清晰（720，默认）</option>
+                    <option value="896">更清晰（896）</option>
+                    <option value="1024">超清（1024）</option>
+                  </select>
+                </div>
+                <div class="settings-section">
+                  <h4>卡片自动收缩</h4>
+                  <label class="chip mode-chip mode-chip-compact"><input type="checkbox" id="panelAutoCollapseDisabled"> 禁止自动收缩</label>
+                  <label class="form-label" style="margin-top:0.5rem;">自动收缩设置</label>
+                  <select id="panelAutoCollapseSeconds" class="form-control">
+                    <option value="15000">15秒</option>
+                    <option value="30000" selected>30秒（默认）</option>
+                    <option value="40000">40秒</option>
+                    <option value="60000">60秒</option>
+                  </select>
+                </div>
+                <div class="settings-section">
+                  <h4>扫描控制</h4>
+                  <div class="btn-row">
+                    <button id="btnScanFull" class="btn btn-primary btn-scan-trigger" onclick="startFullScan()">全扫描</button>
+                    <button id="btnScanIncremental" class="btn btn-primary btn-scan-trigger" onclick="startIncrementalScan()">增量扫描</button>
+                    <button id="btnScanResume" class="btn btn-primary btn-scan-trigger" onclick="startResumeScan()">断点扫描</button>
+                    <button id="btnPickExifRepairDir" class="btn btn-outline btn-sm" onclick="pickExifRepairDir()">选目录</button>
+                    <button id="btnRepairExifIphoneWch" class="btn btn-outline btn-sm" onclick="repairExifIphoneWch()">时间修复</button>
+                  </div>
+                  <div id="exifRepairTargetDirLabel" class="muted">时间修复目录：未选择</div>
+                  <div class="btn-row">
+                    <button class="btn btn-outline" onclick="pauseScan()">暂停</button>
+                    <button class="btn btn-outline" onclick="resumeScan()">继续</button>
+                    <button class="btn btn-outline" onclick="stopScan()">停止</button>
+                  </div>
+                  <div id="scanStatus" class="muted"></div>
+                </div>
+                <div class="settings-section">
+                  <h4>索引冗余压实</h4>
+                  <div class="muted">压实会重建并替换索引文件。请先确认已备份，且扫描任务处于停止状态。</div>
+                  <div class="muted">执行中检索可能变慢；如误操作风险较高，请先做“体检”。</div>
+                  <div class="btn-row">
+                    <button id="btnIndexCompactDryRun" class="btn btn-outline btn-sm" onclick="startIndexCompaction('all', true)">体检（不改写）</button>
+                    <button id="btnIndexCompactFace" class="btn btn-outline btn-sm" onclick="startIndexCompaction('face', false)">压实人脸</button>
+                    <button id="btnIndexCompactVision" class="btn btn-outline btn-sm" onclick="startIndexCompaction('vision', false)">压实视觉</button>
+                    <button id="btnIndexCompactAll" class="btn btn-primary btn-sm" onclick="startIndexCompaction('all', false)">一键全压实</button>
+                  </div>
+                  <div id="indexCompactStatus" class="muted">压实任务：未开始</div>
+                  <details id="indexCompactDetailWrap" hidden>
+                    <summary>查看压实详情</summary>
+                    <pre id="indexCompactDetail" class="status-box"></pre>
+                  </details>
+                </div>
+                <div class="settings-section">
+                  <h4>多要素索引进度</h4>
+                  <div class="progress">
+                    <div id="visionProgressBar" class="progress-bar" style="width: 0%;">0%</div>
+                  </div>
+                  <div id="visionProgressText" class="muted">等待更新...</div>
+                </div>
+                <div class="settings-section">
+                  <h4>扫描处理进度</h4>
+                  <div class="progress">
+                    <div id="faceProgressBar" class="progress-bar" style="width: 0%;">0%</div>
+                  </div>
+                  <div id="faceProgressText" class="muted">等待更新...</div>
+                </div>
+                <div class="settings-section">
+                  <div class="date-filter-header">
+                    <label id="systemStatusTitle" class="form-label section-toggle-title" style="margin-bottom:0;" onclick="toggleSystemStatusPanel()" aria-controls="systemStatusContent" aria-expanded="false" role="button" tabindex="0">系统状态</label>
+                    <button id="btnToggleSystemStatus" class="date-filter-toggle" type="button" onclick="toggleSystemStatusPanel()" aria-expanded="false" title="隐藏/显示">&#9654;</button>
+                  </div>
+                  <div id="systemStatusContent" hidden>
+                    <button class="btn btn-outline" onclick="loadStatus()">刷新</button>
+                    <pre id="systemStatus" class="status-box"></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-action-bar" role="group" aria-label="移动端快捷操作">
+      <div class="mobile-action-top-row">
+        <span id="mobileSortSelectSlot" class="mobile-sort-select-slot" aria-label="结果排序"></span>
+        <span id="mobileFaceCountExactSlot" class="mobile-face-count-exact-slot" hidden></span>
+        <div class="mobile-results-toggle-bar" role="group" aria-label="搜索结果快捷开关">
+          <button
+            id="btnMobileToggleSearchResultsQuick"
+            class="mobile-results-toggle-btn"
+            type="button"
+            onclick="toggleSearchResultsPanel()"
+            aria-pressed="true"
+            aria-label="收起搜索结果"
+            title="收起搜索结果">📰</button>
+          <button
+            id="mobileSearchResultsQuickLabel"
+            class="mobile-results-toggle-label"
+            type="button"
+            onclick="toggleSearchResultsPanel()"
+            aria-label="收起搜索结果"
+            title="收起搜索结果">收起结果</button>
+        </div>
+      </div>
+      <div class="mobile-action-nav-row">
+        <button id="btnSearchBatchFirstMobile" class="btn btn-outline btn-sm" type="button" onclick="goSearchBatchFirst()">首批</button>
+        <button id="btnSearchBatchPrevMobile" class="btn btn-outline btn-sm" type="button" onclick="goSearchBatchPrev()">上批</button>
+        <button id="btnSearchBatchNextMobile" class="btn btn-outline btn-sm" type="button" onclick="goSearchBatchNext()">下批</button>
+        <button id="btnSearchBatchLastMobile" class="btn btn-outline btn-sm" type="button" onclick="goSearchBatchLast()">末批</button>
+      </div>
+    </div>
+
+    <div id="pcBottomQuickBar" class="pc-bottom-quick-bar" role="group" aria-label="PC&#24555;&#25463;&#25805;&#20316;">
+      <button id="btnSearchBatchFirstDesktop" class="btn btn-primary btn-sm" type="button" onclick="goSearchBatchFirst()">&#39318;&#25209;</button>
+      <button id="btnSearchBatchPrevDesktop" class="btn btn-primary btn-sm" type="button" onclick="goSearchBatchPrev()">&#19978;&#25209;</button>
+      <button id="btnBackToTopDesktop" class="btn btn-primary btn-sm" type="button" onclick="scrollToTop()">&#39029;&#39318;</button>
+      <button id="btnBackToBottomDesktop" class="btn btn-primary btn-sm" type="button" onclick="scrollToBottom()">&#39029;&#26411;</button>
+      <button id="btnSearchBatchNextDesktop" class="btn btn-primary btn-sm" type="button" onclick="goSearchBatchNext()">&#19979;&#25209;</button>
+      <button id="btnSearchBatchLastDesktop" class="btn btn-primary btn-sm" type="button" onclick="goSearchBatchLast()">&#26411;&#25209;</button>
+    </div>
+
+  </div>
+
+  <div class="footer-links footer-status-only text-center">
+    <button id="btnMobileSystemSettingsQuick" class="mobile-settings-footer-btn" type="button" onclick="toggleSystemSettings()" aria-pressed="false" aria-label="系统设置">⚙ 设置</button>
+    <div id="searchBatchInfoSticky" class="footer-batch-info">每批55张，等待搜索</div>
+  </div>
+
+  <button id="btnBackToBottom" class="btn btn-primary back-to-bottom" type="button" onclick="scrollToBottom()">页末</button>
+  <button id="btnBackToTop" class="btn btn-primary back-to-top" type="button" onclick="scrollToTop()">页首</button>
+
+  <div id="dirPickerModal" class="dir-picker-modal" hidden>
+    <div class="dir-picker-backdrop" onclick="closeDirPickerModal(false)"></div>
+    <div class="dir-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="dirPickerTitle">
+      <div class="dir-picker-header">
+        <div id="dirPickerTitle" class="dir-picker-title">选择目录</div>
+        <button class="btn btn-outline btn-sm" type="button" onclick="closeDirPickerModal(false)">关闭</button>
+      </div>
+      <div class="dir-picker-toolbar">
+        <select id="dirPickerRootSelect" class="form-control form-control-sm" onchange="onDirPickerRootChange(this.value)"></select>
+        <button id="btnDirPickerUp" class="btn btn-outline btn-sm" type="button" onclick="dirPickerGoParent()">上一级</button>
+        <button id="btnDirPickerRefresh" class="btn btn-outline btn-sm" type="button" onclick="dirPickerRefresh()">刷新</button>
+      </div>
+      <div id="dirPickerPath" class="dir-picker-path muted"></div>
+      <div class="dir-picker-hint muted">单击进入子目录；点击“选择当前目录”确认。</div>
+      <div id="dirPickerList" class="dir-picker-list"></div>
+      <div class="dir-picker-actions">
+        <button id="btnDirPickerConfirm" class="btn btn-primary btn-sm" type="button" onclick="confirmDirPickerSelection()">选择当前目录</button>
+        <button class="btn btn-outline btn-sm" type="button" onclick="closeDirPickerModal(false)">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="policyEditorModal" class="policy-editor-modal" hidden>
+    <div class="policy-editor-backdrop" onclick="closePolicyEditorModal(false)"></div>
+    <div class="policy-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="policyEditorTitle">
+      <div class="policy-editor-header">
+        <div id="policyEditorTitle" class="policy-editor-title">用户权限设置</div>
+        <button class="btn btn-outline btn-sm" type="button" onclick="closePolicyEditorModal(false)">关闭</button>
+      </div>
+      <div id="policyEditorVerifyPanel" class="policy-editor-verify-panel">
+        <div class="muted">请输入当前管理员密码，通过二次验证后才能读取和修改权限配置。</div>
+        <label class="form-label" for="policyEditorVerifyPassword">管理员密码</label>
+        <input id="policyEditorVerifyPassword" type="password" class="form-control" autocomplete="current-password" placeholder="再次输入管理员密码">
+        <div class="btn-row">
+          <button id="btnPolicyEditorVerify" class="btn btn-primary btn-sm" type="button" onclick="submitAdminPolicyReverify()">验证并进入</button>
+        </div>
+        <div id="policyEditorVerifyStatus" class="muted"></div>
+      </div>
+      <div id="policyEditorContent" class="policy-editor-content" hidden>
+        <details id="policyEditorTopDetails" class="policy-editor-top-details">
+          <summary class="policy-editor-top-summary">显示顶部控制</summary>
+          <div class="policy-editor-top-panel">
+            <div class="policy-editor-toolbar">
+              <div class="btn-row policy-editor-toolbar-actions">
+                <button id="btnPolicyEditorReload" class="btn btn-outline btn-sm" type="button" onclick="reloadAdminPolicyStore()">重新读取</button>
+                <button id="btnPolicyEditorAddPolicy" class="btn btn-outline btn-sm" type="button" onclick="addAdminPolicyItem()">新增策略</button>
+                <button id="btnPolicyEditorSave" class="btn btn-primary btn-sm" type="button" onclick="saveAdminPolicyStore()">保存并生效</button>
+              </div>
+            </div>
+            <div class="muted policy-editor-config-meta">配置来源：<span id="policyEditorConfigPath">-</span></div>
+            <div class="policy-editor-meta-grid">
+              <label class="policy-editor-field">
+                <span class="policy-editor-field-label">version</span>
+                <input id="policyEditorVersion" type="number" class="form-control form-control-sm" min="1" step="1">
+              </label>
+              <label class="policy-editor-field">
+                <span class="policy-editor-field-label">updated_at</span>
+                <input id="policyEditorUpdatedAt" type="text" class="form-control form-control-sm" placeholder="留空则保存时自动更新">
+              </label>
+              <label class="policy-editor-checkbox">
+                <input id="policyEditorDefaultDeny" type="checkbox">
+                <span>default_deny</span>
+              </label>
+            </div>
+          </div>
+        </details>
+        <div id="policyEditorPoliciesList" class="policy-editor-policies-list"></div>
+        <div id="policyEditorSaveStatus" class="muted"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/ui/app.js?v=20260313_admin_policy_editor_v1"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

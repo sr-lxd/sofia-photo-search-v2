@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS standard_photo (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  photo_id BIGINT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_standard_photo_photos FOREIGN KEY (photo_id) REFERENCES photos(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE standard_photo
+  MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE standard_photo
+  MODIFY COLUMN photo_id BIGINT NOT NULL;
+
+ALTER TABLE standard_photo
+  DROP COLUMN IF EXISTS updated_at;
+
+ALTER TABLE standard_photo
+  ADD COLUMN IF NOT EXISTS created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE standard_photo
+  ADD UNIQUE INDEX IF NOT EXISTS uk_standard_photo_photo_id (photo_id);

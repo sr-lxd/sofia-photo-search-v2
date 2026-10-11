@@ -1,0 +1,10 @@
+﻿fastapi
+uvicorn[standard]
+pymysql
+pydantic
+python-multipart
+numpy
+pillow
+pillow-heif
+psutil
+watchdog

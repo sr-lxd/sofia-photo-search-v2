@@ -1,0 +1,8 @@
+insightface
+face_recognition
+faiss-cpu
+hnswlib
+onnxruntime-gpu
+torch
+torchvision
+open_clip_torch

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>照片搜索</title>
+<link rel="stylesheet" href="/ui/gallery.css?v=20261010">
+<script src="/ui/gallery.js?v=20261010" defer></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/">照片搜索<span>v2</span></a><div class="account"><span id="identity"></span><a href="/ui/legacy.html">高级功能与维护</a><button id="logout" type="button">退出</button></div></header>
+<main class="workspace">
+<nav class="task-tabs" aria-label="找照片方式"><button data-mode="library" aria-pressed="true">照片库</button><button data-mode="photo" aria-pressed="false">照片找照片</button><button data-mode="description" aria-pressed="false">描述找照片</button></nav>
+<section class="recent-panel" aria-labelledby="recentTitle"><div class="recent-heading"><h1 id="recentTitle">近期照片</h1><div class="basis-tabs"><button data-basis="photo" aria-pressed="true">按照片日期</button><button data-basis="added" aria-pressed="false">最近入库</button></div></div><div class="quick-dates"><button data-recent="7">最近7天</button><button data-recent="30" aria-pressed="true">最近30天</button><button data-recent="90">最近90天</button><button data-recent="all">全部照片</button><button id="customDate">自定义时间</button></div><p id="rangeLabel" class="secondary">包含今天，按上海时区计算。</p></section>
+<div class="layout">
+<aside class="condition-panel" id="conditionPanel" aria-label="搜索条件">
+<div class="panel-header"><h2>搜索条件</h2><button type="button" class="mobile-only" id="closeConditions">取消</button></div>
+<form id="conditions">
+<section id="photoSection" hidden><label>查找目标<select id="photoGoal"><option value="face">找同一个人</option><option value="scene">找相似画面</option></select></label><div class="reference-actions"><label class="upload-button">添加参考照片<input id="fileInput" type="file" accept="image/*,.heic,.heif" multiple></label><button id="choosePool" type="button">常用参考图</button></div><div id="referenceList" class="reference-list"></div><p class="secondary">仅这里列出的照片参与本次搜索。</p><details><summary>多人匹配</summary><label>参考人脸关系<select id="faceMode"><option value="or">匹配任一参考人脸</option><option value="and">匹配全部参考人脸</option></select></label><label>至少匹配参考人脸数<input id="minMatch" type="number" min="1" max="100" placeholder="自动"></label><p class="secondary">这是参考人脸匹配要求，与照片中的总人数分别设置。</p></details></section>
+<section id="descriptionSection" hidden><label>描述照片中的画面<textarea id="description" rows="3" maxlength="500" placeholder="例如：操场上的学生合影"></textarea></label><div class="scene-examples"><button type="button" data-scene="操场上的学生合影">操场</button><button type="button" data-scene="教室里的小组活动">教室</button><button type="button" data-scene="舞台上的表演">舞台</button><button type="button" data-scene="山间风景">风景</button></div><p class="secondary" id="descriptionNote">描述检索按相关程度提供候选。</p></section>
+<fieldset><legend>时间</legend><label>时间依据<select id="timeBasis"><option value="photo">照片日期</option><option value="added">入库时间</option></select></label><label>范围<select id="recentDays"><option value="7">最近7天</option><option value="30" selected>最近30天</option><option value="90">最近90天</option><option value="all">全部时间</option><option value="custom">自定义</option></select></label><div class="date-fields" id="dateFields" hidden><label>从<input id="dateFrom" type="date"></label><label>到<input id="dateTo" type="date"></label></div></fieldset>
+<fieldset><legend>人数</legend><label>检测到的人脸数<select id="faceCount"><option value="all">不限</option><option value="1">1个</option><option value="2">2个</option><option value="3-5">3—5个</option><option value="6+">6个及以上</option><option value="custom">自定义区间</option></select></label><div id="faceFields" class="date-fields" hidden><label>至少<input id="faceMin" type="number" min="1" max="10000"></label><label>至多<input id="faceMax" type="number" min="1" max="10000"></label></div><p class="secondary">人数按检测到的人脸估计，背影和遮挡可能未检出。</p></fieldset>
+<fieldset><legend>拍摄地点</legend><label>常用地点<select id="placeSelect"><option value="">不限</option><option value="manual">手动指定坐标</option></select></label><div id="gpsFields" hidden><div class="date-fields"><label>纬度<input id="latitude" type="number" step="any" min="-90" max="90"></label><label>经度<input id="longitude" type="number" step="any" min="-180" max="180"></label></div><label>附近范围（公里）<input id="radius" type="number" min="0.1" max="1000" step="0.1" value="5"></label><label>地点名称<input id="placeName" maxlength="100" placeholder="例如：学校"></label><div class="row"><button type="button" id="savePlace">保存为常用地点</button><button type="button" id="currentLocation">使用当前位置</button></div><p class="secondary">只筛选有GPS的照片。当前位置只是查询中心。</p></div></fieldset>
+<details><summary>目录与文件名</summary><label>可访问目录<select id="directory"><option value="">全部目录</option></select></label><label>文件名包含<input id="filename" maxlength="200" placeholder="输入文件名关键词"></label><p class="secondary">目录线索与GPS地点分别处理。</p></details>
+<div class="apply-actions"><button class="primary" type="submit" id="apply">应用条件</button><button type="button" id="reset">重置条件</button></div>
+</form></aside>
+<section class="results-panel" aria-label="照片结果">
+<div class="active-filters" id="activeFilters" aria-label="已应用的条件"></div>
+<div class="message" id="message" aria-live="polite"></div><div id="error" class="error" role="alert" hidden></div>
+<div class="results-toolbar"><div><strong id="resultCount">正在读取照片库</strong><span class="secondary" id="elapsed"></span></div><div class="row"><label class="sort-label">排序<select id="sort"><option value="date_desc">时间从新到旧</option><option value="date_asc">时间从旧到新</option><option value="face_asc">人脸数从少到多</option><option value="face_desc">人脸数从多到少</option><option value="relevance">相关程度</option></select></label><button id="undo" type="button" disabled>撤回</button><button id="toggleSelect" type="button" aria-pressed="false">选择</button></div></div>
+<section class="suggestion-panel" id="suggestionPanel" hidden><div class="suggestion-heading"><h2>还可以这样找</h2><span id="suggestionScope" class="secondary"></span></div><div class="suggestion-list" id="suggestionList"></div><p class="secondary" id="gpsSummary"></p></section>
+<div id="photoGrid" class="photo-grid"></div>
+<div class="empty-state" id="empty" hidden><h2>这个范围内没有照片</h2><p>可以扩大时间，或移除人数、地点等条件。</p><div class="row"><button id="expandTime">查看全部时间</button><button id="switchAdded">试试最近入库</button></div></div>
+<div class="load-more"><button id="loadMore" type="button" hidden>加载更多</button></div>
+</section></div>
+</main>
+<div class="mobile-actions"><button class="primary" id="openConditions">修改搜索</button><button id="mobileSelect">选择照片</button></div>
+<div class="selection-bar" id="selectionBar" hidden><span id="selectionCount" aria-live="polite"></span><div class="row"><button id="selectPage">选择已加载照片</button><button id="clearSelection">清空选择</button><button class="primary" id="downloadSelected">下载所选</button></div></div>
+<div class="shade" id="shade" hidden></div>
+<dialog class="viewer" id="viewer"><div class="viewer-toolbar"><button id="prevPhoto" aria-label="上一张">上一张</button><span id="viewerPosition"></span><button id="nextPhoto" aria-label="下一张">下一张</button><button id="closeViewer">关闭</button></div><div class="image-stage" id="imageStage"><img id="largeImage" alt="照片大图"></div><div class="viewer-controls"><button id="zoomOut">缩小</button><button id="zoomIn">放大</button><button id="rotate">旋转</button><button id="resetZoom">还原</button><a id="originalLink" class="button" target="_blank" rel="noopener">原图/下载</a></div><div class="viewer-actions"><button id="referencePerson">用它找人</button><button id="referenceScene">找相似画面</button><button id="nearbyPhoto">查找此处附近</button><button id="saveReference">保存常用参考图</button></div><details><summary>照片信息</summary><dl id="photoInfo"></dl></details></dialog>
+<dialog class="pool-dialog" id="poolDialog"><h2>常用参考图</h2><p class="secondary">点击添加到本次搜索，不改变原有标准照片池。</p><div id="poolList" class="pool-list"></div><button id="closePool">完成</button></dialog>
+</body>
+</html>

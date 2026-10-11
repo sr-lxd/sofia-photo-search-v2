@@ -1,0 +1,679 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sofia照片多要素搜索器｜详细用户使用手册（图文版）</title>
+  <style>
+    :root {
+      --bg: #f4f7ff;
+      --card: #ffffff;
+      --line: #dbe7ff;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #1d4ed8;
+      --ok: #16a34a;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --shadow: 0 10px 24px rgba(15,23,42,.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eaf1ff 0%, #f8fbff 42%, #eef4ff 100%);
+      line-height: 1.68;
+    }
+    .wrap { width: min(1220px, 95vw); margin: 0 auto; }
+
+    .hero {
+      margin: 18px 0 14px;
+      border-radius: 18px;
+      background: radial-gradient(circle at 20% 20%, #3b82f6 0, #1d4ed8 38%, #1e3a8a 100%);
+      color: #fff;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -90px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.1);
+    }
+    h1 { margin: 0 0 8px; font-size: clamp(24px, 3.2vw, 40px); }
+    .sub { margin: 0; opacity: .95; font-size: clamp(14px, 1.8vw, 18px); }
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill {
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.14);
+    }
+
+    .toc {
+      margin: 0 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .toc a {
+      color: #1e3a8a;
+      text-decoration: none;
+      font-size: 12px;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      background: #f8fbff;
+      padding: 4px 8px;
+    }
+
+    section {
+      margin: 12px 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+      padding: 16px;
+      box-shadow: 0 6px 16px rgba(15,23,42,.05);
+    }
+    h2 {
+      margin: 0 0 10px;
+      color: #1e3a8a;
+      font-size: clamp(20px, 2.4vw, 30px);
+    }
+    h3 { margin: 0 0 8px; font-size: 17px; color: #1f2937; }
+    h4 { margin: 0 0 6px; font-size: 15px; color: #334155; }
+
+    .grid-2 { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+
+    .box {
+      border: 1px solid #dbe7ff;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+    }
+    .tip {
+      border-left: 4px solid #60a5fa;
+      border-radius: 8px;
+      background: #eff6ff;
+      padding: 8px 10px;
+      font-size: 13px;
+      color: #334155;
+      margin-top: 8px;
+    }
+    .warn {
+      border-left-color: #f59e0b;
+      background: #fff7ed;
+    }
+    .danger {
+      border-left-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .steps {
+      border-left: 3px solid #bfd4ff;
+      margin-left: 3px;
+      padding-left: 12px;
+    }
+    .step { margin: 6px 0 10px; }
+    .step b { color: #1e3a8a; }
+
+    .shot-grid {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+    }
+    figure.shot {
+      margin: 0;
+      border: 1px solid #dbe7ff;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #eef2ff;
+    }
+    .shot figcaption {
+      padding: 6px;
+      font-size: 12px;
+      text-align: center;
+      color: #475569;
+      border-top: 1px solid #dbe7ff;
+      background: #f8fbff;
+    }
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .tech-tag {
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      background: #f8fbff;
+      color: #334155;
+      font-size: 12px;
+      padding: 3px 8px;
+      line-height: 1.3;
+    }
+
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 740px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #dbe7ff;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eff6ff; color: #1e3a8a; }
+
+    code {
+      background: #f1f5f9;
+      border: 1px solid #dbe3ef;
+      border-radius: 6px;
+      padding: 1px 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 12px;
+    }
+
+    .footer {
+      margin: 0 0 20px;
+      text-align: center;
+      color: #64748b;
+      font-size: 12px;
+      padding: 8px 0;
+    }
+
+    @media (max-width: 980px) {
+      .grid-2, .grid-3, .shot-grid { grid-template-columns: 1fr; }
+      table { min-width: 560px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Sofia 照片多要素搜索器｜详细用户使用手册</h1>
+      <p class="sub">图文版（适用于日常使用、培训交接、运维巡检）</p>
+      <div class="meta">
+        <span class="pill">文档版本：2026-03-04</span>
+        <span class="pill">适用端口：5090</span>
+        <span class="pill">适用环境：Windows + Python + MySQL</span>
+        <span class="pill">推荐对象：安保 / 行政 / 班主任 / 档案宣传</span>
+      </div>
+    </header>
+
+    <nav class="toc">
+      <a href="#s1">1. 快速上手</a>
+      <a href="#s2">2. 界面总览</a>
+      <a href="#s3">3. 标准照片</a>
+      <a href="#s4">4. 搜索要素</a>
+      <a href="#s5">5. 开始搜索与结果</a>
+      <a href="#s6">6. 排序（11种）</a>
+      <a href="#s7">7. 结果卡片操作</a>
+      <a href="#s8">8. GPS与日期</a>
+      <a href="#s9">9. 手机端专用</a>
+      <a href="#s10">10. 系统设置</a>
+      <a href="#s11">11. 扫描与时间修复</a>
+      <a href="#s12">12. 索引压实</a>
+      <a href="#s13">13. 数据安全</a>
+      <a href="#s14">14. 常见问题</a>
+      <a href="#s15">15. 运维清单</a>
+      <a href="#s16">16. 附录</a>
+      <a href="#s17">17. 核心技术</a>
+    </nav>
+
+    <section id="s1">
+      <h2>1. 3分钟快速上手</h2>
+      <div class="steps">
+        <div class="step"><b>步骤1：</b>点击“添加文件”，上传一张或多张标准照片。</div>
+        <div class="step"><b>步骤2：</b>勾选“人脸”（可选叠加：全景/聚焦/文字）。</div>
+        <div class="step"><b>步骤3：</b>点击“开始搜索”。</div>
+        <div class="step"><b>步骤4：</b>使用“首批/上批/下批/末批”翻页，结合排序快速定位。</div>
+        <div class="step"><b>步骤5：</b>对命中结果执行“标准照片 / GPS中心 / 原图 / 重命名 / 删除 / 下载”。</div>
+        <div class="step"><b>步骤6：</b>若要浏览整个照片库，可直接勾选“文字 + 全类型文件”后点击“开始搜索”（可不上传标准照片）。</div>
+        <div class="step"><b>步骤7：</b>在“排序”下拉框切换不同排序方式，可快速查看不同排序效果。</div>
+      </div>
+      <div class="tip">首次建议：先用“人脸 + 默认设置”跑一轮；需要全库浏览时，使用“文字 + 全类型文件”。</div>
+    </section>
+
+    <section id="s2">
+      <h2>2. 界面总览（图）</h2>
+      <div class="shot-grid">
+        <figure class="shot">
+          <img src="./a1df9528c8922a857044ce787fab8997.png" alt="软件界面截图1" loading="lazy" />
+          <figcaption>界面截图 1：搜索主界面</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./b73049d1de7d113b7d82c814a755b2dd.png" alt="软件界面截图2" loading="lazy" />
+          <figcaption>界面截图 2：结果与工具区</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./c6dcc337a64f01758e3c534283e9df0b.png" alt="软件界面截图3" loading="lazy" />
+          <figcaption>界面截图 3：系统设置与运维区</figcaption>
+        </figure>
+      </div>
+      <div class="grid-3" style="margin-top:10px;">
+        <div class="box"><h4>左侧（主操作区）</h4><p>上传标准照片、选择要素、设置搜索条件、触发搜索。</p></div>
+        <div class="box"><h4>右侧（结果区）</h4><p>结果列表、排序、分页、下载与删除等批量操作。</p></div>
+        <div class="box"><h4>系统设置区</h4><p>扫描控制、时间修复、索引体检/压实、系统状态。</p></div>
+      </div>
+    </section>
+
+    <section id="s3">
+      <h2>3. 上传标准照片（核心入口）</h2>
+      <div class="grid-2">
+        <div class="box">
+          <h3>3.1 操作方法</h3>
+          <ul>
+            <li>点击“添加文件”，可多选图片。</li>
+            <li>已添加的标准照片可在列表中查看、勾选、删除。</li>
+            <li>结果卡片中的“标准照片”按钮，也可把命中图加入标准池。</li>
+          </ul>
+          <h3>3.2 清理按钮</h3>
+          <ul>
+            <li><b>删除选中</b>：只删勾选项。</li>
+            <li><b>清空</b>：清空当前标准照片列表。</li>
+            <li><b>清空所有</b>：清空标准照片 + 上传池 + GPS中心联动状态。</li>
+            <li><b>刷新</b>：重新读取标准照片列表。</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>3.3 使用建议</h3>
+          <ul>
+            <li>优先选“脸部清晰、角度正常、光线稳定”的照片。</li>
+            <li>同一人物可上传多张，提高检索稳健性。</li>
+            <li>多人检索时，建议按人物分批搜索，避免条件过杂。</li>
+          </ul>
+          <div class="tip warn">若“人脸 AND”无结果，可先切到 OR，再逐步收紧条件。</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="s4">
+      <h2>4. 搜索要素与参数说明</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>模块</th><th>参数</th><th>作用</th><th>建议</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>人脸</td>
+              <td>OR / AND；至少匹配；预裁剪</td>
+              <td>主检索维度，决定人脸召回与精度</td>
+              <td>先 OR 后 AND；至少匹配留空可自动</td>
+            </tr>
+            <tr>
+              <td>全景</td>
+              <td>勾选开关</td>
+              <td>按整图语义匹配（风景/室内/街景等）</td>
+              <td>与人脸叠加时可显著减少误命中</td>
+            </tr>
+            <tr>
+              <td>聚焦</td>
+              <td>中心/垂直/十字/横向（可多选）</td>
+              <td>对图像关注区域进行限制</td>
+              <td>主体常居中时优先“中心”</td>
+            </tr>
+            <tr>
+              <td>文字</td>
+              <td>关键词；AND/OR；全类型文件</td>
+              <td>按文件名/目录关键词过滤</td>
+              <td>全类型文件适合全库排序浏览</td>
+            </tr>
+            <tr>
+              <td>要素逻辑</td>
+              <td>AND / OR</td>
+              <td>决定“人脸/全景/聚焦/文字”之间的组合关系</td>
+              <td>精准检索用 AND；宽松召回用 OR</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="s5">
+      <h2>5. 开始搜索与结果浏览</h2>
+      <div class="grid-2">
+        <div class="box">
+          <h3>5.1 开始搜索</h3>
+          <ul>
+            <li>点击“开始搜索”后，系统会返回当前批次结果。</li>
+            <li>默认每批 55 张，底部会显示“第 x/y 批 ｜ 共 n 条”。</li>
+          </ul>
+          <h3>5.2 翻页</h3>
+          <ul>
+            <li>首批：跳到第一页</li>
+            <li>上批：上一页</li>
+            <li>下批：下一页</li>
+            <li>末批：最后一页</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>5.3 调试信息怎么看</h3>
+          <ul>
+            <li>“查看调试详情”可看到各要素命中数量和组合后返回数。</li>
+            <li>当命中明显偏少，优先查看：
+              <ul>
+                <li>人脸逻辑是否过严（AND + 至少匹配过大）</li>
+                <li>文字关键词是否过窄</li>
+                <li>日期/GPS是否限制过小</li>
+              </ul>
+            </li>
+          </ul>
+          <div class="tip">建议养成“先宽后严”的检索习惯：先召回，再逐步收紧。</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="s6">
+      <h2>6. 搜索结果排序（11种）</h2>
+      <div class="box">
+        <p><b>当前支持：</b>时间新→旧、时间旧→新、相似度高→低、相似度低→高、脸数多→少、脸数少→多、限定脸数、距参考点近→远、距参考点远→近、文件名A→Z、文件名Z→A。</p>
+        <h3>6.1 限定脸数（重点）</h3>
+        <ul>
+          <li>选择“限定脸数”后，会出现脸数输入框。</li>
+          <li>输入范围为 <code>0..n</code>，<code>n</code> 为当前搜索结果中的最大脸数。</li>
+          <li>输入 <code>0</code> 表示只看“无脸”的照片。</li>
+          <li>该逻辑基于整次搜索结果，不是只针对当前页。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="s7">
+      <h2>7. 搜索结果卡片操作</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>按钮</th><th>作用</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>原图</td><td>打开原始文件</td><td>用于核验细节与导出前复查</td></tr>
+            <tr><td>重命名</td><td>修改文件名</td><td>物理文件 + 数据库同步更新；扫描中禁用</td></tr>
+            <tr><td>标准照片</td><td>加入标准池</td><td>便于下一轮组合检索</td></tr>
+            <tr><td>GPS中心</td><td>设置中心点</td><td>用于后续半径查询或叠加查询</td></tr>
+            <tr><td>删除</td><td>移入回收目录</td><td>移动到 <code>pre_deleted</code> 并清理数据库关联</td></tr>
+            <tr><td>勾选</td><td>批量操作</td><td>与“下载选中 / 删除”联动</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip danger">“删除”不是立即粉碎：会先移动到项目回收目录，便于审计与回溯。</div>
+    </section>
+
+    <section id="s8">
+      <h2>8. GPS中心与搜索日期</h2>
+      <div class="grid-2">
+        <div class="box">
+          <h3>8.1 GPS中心使用流程</h3>
+          <div class="steps">
+            <div class="step"><b>1）</b>先在结果卡片点击“GPS中心”。</div>
+            <div class="step"><b>2）</b>在“GPS 半径查询”输入公里数。</div>
+            <div class="step"><b>3）</b>选择“按GPS半径查询”或“按GPS半径叠加要素查询”。</div>
+          </div>
+        </div>
+        <div class="box">
+          <h3>8.2 日期过滤</h3>
+          <ul>
+            <li>可设置起始/结束日期。</li>
+            <li>支持快捷按钮：全部日期 / 前1月 / 前5年。</li>
+            <li>与任意搜索要素可叠加。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="s9">
+      <h2>9. 手机端专用说明</h2>
+      <div class="grid-3">
+        <div class="box">
+          <h4>底部固定条</h4>
+          <p>固定“首批/上批/下批/末批”，并整合排序选择，适合单手操作。</p>
+        </div>
+        <div class="box">
+          <h4>设置快速按钮</h4>
+          <p>底部“⚙ 设置”为 sticky 按钮，展开可自动定位系统设置，关闭后回页顶。</p>
+        </div>
+        <div class="box">
+          <h4>图片浏览</h4>
+          <p>支持双击放大、滑动切换、旋转、复位/复原等操作。</p>
+        </div>
+      </div>
+      <div class="tip">手机端建议使用系统浏览器并定期强制刷新，避免缓存导致样式不同步。</div>
+    </section>
+
+    <section id="s10">
+      <h2>10. 系统设置详解</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>分组</th><th>功能</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>项目使用说明</td><td>查看帮助说明</td><td>给新用户快速培训</td></tr>
+            <tr><td>界面交互</td><td>缩略图放大触发、图像放大精细度</td><td>影响浏览手感与清晰度</td></tr>
+            <tr><td>卡片自动收缩</td><td>禁止自动收缩；15/30/40/60秒</td><td>移动端防误触、提速操作</td></tr>
+            <tr><td>扫描控制</td><td>增量/断点/暂停/继续/停止</td><td>处理新增、移动、删除后的同步</td></tr>
+            <tr><td>时间修复</td><td>选目录 + 时间修复</td><td>修复 EXIF 异常时间</td></tr>
+            <tr><td>索引冗余压实</td><td>体检/压实人脸/压实视觉/一键压实</td><td>优化索引健康与体积</td></tr>
+            <tr><td>系统状态</td><td>刷新查看状态 JSON</td><td>用于运维诊断</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="s11">
+      <h2>11. 扫描与时间修复</h2>
+      <div class="grid-2">
+        <div class="box">
+          <h3>11.1 什么时候用扫描</h3>
+          <ul>
+            <li><b>增量扫描：</b>日常新增/移动/删除后使用（推荐）。</li>
+            <li><b>断点扫描：</b>上次中断后继续。</li>
+            <li><b>全扫描：</b>仅在重大修复、索引重建时使用。</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>11.2 时间修复规则</h3>
+          <ol>
+            <li>优先读取 EXIF 时间；</li>
+            <li>没有 EXIF 时，根据路径“年/月”推断；</li>
+            <li>再不行回退到文件 mtime。</li>
+          </ol>
+          <p>修复任务会显示 <code>x/n</code> 进度。</p>
+        </div>
+      </div>
+      <div class="tip warn">扫描中禁止重命名与部分高风险动作，建议先结束扫描再进行管理操作。</div>
+    </section>
+
+    <section id="s12">
+      <h2>12. 索引体检与压实（重要）</h2>
+      <div class="steps">
+        <div class="step"><b>1）先体检（dry-run）</b>：查看当前索引健康，不改写文件。</div>
+        <div class="step"><b>2）确认备份</b>：建议备份数据库 + 索引 + 配置。</div>
+        <div class="step"><b>3）再压实</b>：可选压实人脸、压实视觉、一键全压实。</div>
+        <div class="step"><b>4）压实时停扫</b>：避免与扫描并发，防止索引抖动。</div>
+      </div>
+      <div class="tip danger">正式压实前会要求输入确认短语：<code>我已备份并确认压实</code>。</div>
+    </section>
+
+    <section id="s13">
+      <h2>13. 数据安全与备份建议</h2>
+      <div class="grid-3">
+        <div class="box">
+          <h4>建议备份清单</h4>
+          <ul>
+            <li>MySQL 数据库</li>
+            <li>人脸索引与视觉索引</li>
+            <li>索引 .prev 与 manifest</li>
+            <li>配置文件 <code>db2.ini</code></li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>删除策略说明</h4>
+          <p>删除操作会将文件移动到 <code>pre_deleted</code>，并写入清单，便于回溯。</p>
+        </div>
+        <div class="box">
+          <h4>权限建议</h4>
+          <p>部署到校内网络时建议限制访问网段，并定期更换登录密码。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="s14">
+      <h2>14. 常见问题（FAQ）</h2>
+      <div class="box">
+        <h4>Q1：上传标准图后搜索不到人脸？</h4>
+        <p>A：先检查标准图是否清晰；将人脸逻辑改为 OR；减少附加条件后再逐步收紧。</p>
+
+        <h4>Q2：明明有新照片，为什么没显示？</h4>
+        <p>A：需要先跑一次增量扫描，索引和数据库才会同步新增文件。</p>
+
+        <h4>Q3：时间显示异常（例如偏到 2026）怎么办？</h4>
+        <p>A：在系统设置执行“时间修复”，并选择目标目录。</p>
+
+        <h4>Q4：删除后为什么列表变化很大？</h4>
+        <p>A：删除会影响当前搜索结果集合，建议删除后重新执行一次搜索。</p>
+
+        <h4>Q5：排序里的“限定脸数”为何看不到输入框？</h4>
+        <p>A：只有当排序模式切换到“限定脸数”时，输入框才会显示。</p>
+      </div>
+    </section>
+
+    <section id="s15">
+      <h2>15. 日常运维清单（建议打印）</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>频率</th><th>检查项</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>每日</td><td>服务是否正常、能否检索</td><td>访问首页 + 运行一次简单搜索</td></tr>
+            <tr><td>每周</td><td>增量同步</td><td>执行增量扫描，确认进度到 100%</td></tr>
+            <tr><td>每周</td><td>日志巡检</td><td>查看 <code>logs/photo_search.log</code> 是否有连续异常</td></tr>
+            <tr><td>每月</td><td>索引健康</td><td>运行索引体检，按需压实</td></tr>
+            <tr><td>每月</td><td>备份</td><td>数据库 + 索引 + 配置文件归档</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="s16">
+      <h2>16. 附录：启动脚本速查</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>脚本</th><th>用途</th><th>推荐场景</th></tr></thead>
+          <tbody>
+            <tr><td><code>智能启动(优先续扫否则增量).bat</code></td><td>重启服务并优先续扫</td><td>日常首选</td></tr>
+            <tr><td><code>启动并断点续扫(重启+续扫).bat</code></td><td>断点恢复</td><td>上次中断后</td></tr>
+            <tr><td><code>启动并扫描(重启+增量).bat</code></td><td>重启并增量</td><td>有新增/移动/删除</td></tr>
+            <tr><td><code>启动照片搜索(仅启动).bat</code></td><td>仅启动服务</td><td>临时查看或演示</td></tr>
+            <tr><td><code>仅全量扫描(服务运行中触发全量).bat</code></td><td>触发全量扫描</td><td>仅重大修复时</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip">默认服务地址：<code>http://127.0.0.1:5090</code>（局域网可用服务器IP访问）。</div>
+    </section>
+
+    <section id="s17">
+      <h2>17. 本系统使用的核心技术</h2>
+      <div class="grid-2">
+        <div class="box">
+          <h3>17.1 技术架构图（示意）</h3>
+          <svg viewBox="0 0 640 320" width="100%" aria-label="系统核心技术架构图">
+            <defs>
+              <linearGradient id="tg1" x1="0" x2="1">
+                <stop offset="0" stop-color="#3b82f6"/>
+                <stop offset="1" stop-color="#1d4ed8"/>
+              </linearGradient>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <polygon points="0,0 8,4 0,8" fill="#64748b"/>
+              </marker>
+            </defs>
+            <rect x="18" y="28" width="150" height="62" rx="12" fill="#eaf2ff" stroke="#bfd4ff"/>
+            <text x="93" y="63" text-anchor="middle" font-size="15" fill="#1e3a8a">前端 UI</text>
+            <text x="93" y="81" text-anchor="middle" font-size="12" fill="#475569">HTML/CSS/JS</text>
+
+            <rect x="244" y="28" width="150" height="62" rx="12" fill="url(#tg1)"/>
+            <text x="319" y="62" text-anchor="middle" font-size="15" fill="#fff">FastAPI</text>
+            <text x="319" y="80" text-anchor="middle" font-size="12" fill="#dbeafe">Python API层</text>
+
+            <rect x="470" y="28" width="150" height="62" rx="12" fill="#eef2ff" stroke="#c7d2fe"/>
+            <text x="545" y="63" text-anchor="middle" font-size="15" fill="#312e81">MySQL</text>
+            <text x="545" y="81" text-anchor="middle" font-size="12" fill="#475569">元数据/关系</text>
+
+            <rect x="112" y="196" width="170" height="72" rx="12" fill="#ecfeff" stroke="#a5f3fc"/>
+            <text x="197" y="228" text-anchor="middle" font-size="14" fill="#0e7490">人脸引擎</text>
+            <text x="197" y="246" text-anchor="middle" font-size="12" fill="#475569">InsightFace</text>
+
+            <rect x="356" y="196" width="170" height="72" rx="12" fill="#f0fdf4" stroke="#bbf7d0"/>
+            <text x="441" y="228" text-anchor="middle" font-size="14" fill="#166534">视觉引擎</text>
+            <text x="441" y="246" text-anchor="middle" font-size="12" fill="#475569">OpenCLIP</text>
+
+            <line x1="168" y1="59" x2="244" y2="59" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+            <line x1="394" y1="59" x2="470" y2="59" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+            <line x1="319" y1="90" x2="319" y2="196" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+            <line x1="282" y1="232" x2="356" y2="232" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <rect x="244" y="120" width="150" height="50" rx="10" fill="#eef2ff" stroke="#c7d2fe"/>
+            <text x="319" y="147" text-anchor="middle" font-size="13" fill="#1f2937">FAISS 向量索引</text>
+          </svg>
+          <div class="tip">检索核心链路：前端输入 -> FastAPI 组合检索 -> MySQL 过滤/回填 -> FAISS 相似检索 -> 结果分页与排序。</div>
+        </div>
+        <div class="box">
+          <h3>17.2 技术栈清单</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">FastAPI</span>
+            <span class="tech-tag">Uvicorn</span>
+            <span class="tech-tag">MySQL</span>
+            <span class="tech-tag">PyMySQL</span>
+            <span class="tech-tag">InsightFace</span>
+            <span class="tech-tag">OpenCLIP</span>
+            <span class="tech-tag">FAISS</span>
+            <span class="tech-tag">Pillow / pillow-heif</span>
+            <span class="tech-tag">HTML / CSS / JavaScript</span>
+          </div>
+          <div class="table-wrap" style="margin-top:8px;">
+            <table>
+              <thead><tr><th>技术模块</th><th>实际用途</th></tr></thead>
+              <tbody>
+                <tr><td>FastAPI + Uvicorn</td><td>承载后端 API、搜索接口、扫描控制和运维接口</td></tr>
+                <tr><td>MySQL</td><td>存储照片元数据、face关系、embedding映射、扫描进度</td></tr>
+                <tr><td>InsightFace</td><td>检测人脸并生成向量，支撑人脸相似检索</td></tr>
+                <tr><td>OpenCLIP</td><td>生成全景/聚焦语义向量，支撑非人脸语义检索</td></tr>
+                <tr><td>FAISS</td><td>高性能向量检索（face索引 + vision索引）</td></tr>
+                <tr><td>Pillow / pillow-heif</td><td>图像读取、EXIF解析、HEIC兼容、缩略图生成</td></tr>
+                <tr><td>原生前端</td><td>PC/手机自适应界面、底部 sticky、结果交互</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Sofia 照片多要素搜索器｜详细用户使用手册（图文版）<br/>
+      开发者：Sofia思维实验室 ｜ 联系方式：见仓库 Issues ｜ 生成日期：2026-03-04
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# 敏感配置（含数据库密码、session_secret、目录访问密码）
+db2.ini
+db2.ini.bak*
+db2_v2.ini
+config/auth_policies*.json
+!config/auth_policies.example.json
+
+# 运行时数据、模型、索引、缩略图
+runtime/
+data/
+logs/
+downloads/
+.sync_cache_v2.json
+
+# 备份与归档
+archive/
+pre_deleted/
+*.bak
+*.bak_*
+*.before_*
+* - 副本.*
+
+# Python
+.venv/
+__pycache__/
+*.pyc
