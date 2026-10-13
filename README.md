@@ -1,5 +1,11 @@
 ﻿# Sofia 照片多要素搜索器
 
+<!-- en-intro -->
+**Sofia Photo Search** — face-first multi-factor search for local photo libraries: filter by face, full view, focus, text, GPS and date. Built on FastAPI + MySQL + FAISS, with scanning and index-maintenance tooling.
+<!-- /en-intro -->
+
+---
+
 > 本项目已进入可落地运行阶段。本文档用于“一次看懂 + 快速接手 + 稳定运维”。
 
 ## 1. 项目定位
